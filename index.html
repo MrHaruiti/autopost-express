@@ -4,16 +4,24 @@
     <meta charset="UTF-8">
     <title>AutoPost Express</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-        #output { background: #eee; padding: 15px; border-radius: 5px; min-height: 100px; margin-top: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ff7e5f, #feb47b); margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        h1 { text-align: center; color: #333; }
+        label { font-weight: bold; margin-top: 15px; display: block; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
+        button { background: #ff7e5f; color: #fff; border: none; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #feb47b; }
+        #output { background: #f0f0f0; padding: 15px; border-radius: 8px; min-height: 100px; margin-top: 20px; font-size: 18px; }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo img { width: 150px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>AutoPost Express</h1>
+    <div class="logo">
+        <img src="https://dummyimage.com/150x50/ff7e5f/ffffff&text=AutoPost+Express" alt="AutoPost Express">
+    </div>
+    <h1>Gerador de Posts</h1>
     <label>Tema do post:</label>
     <input type="text" id="tema" placeholder="Ex: Promoção de pizzaria">
     
@@ -35,18 +43,23 @@
 
 <script>
 function gerarPost() {
-    let tema = document.getElementById('tema').value;
-    let publico = document.getElementById('publico').value;
+    let tema = document.getElementById('tema').value.trim();
+    let publico = document.getElementById('publico').value.trim();
     let tom = document.getElementById('tom').value;
+
+    if (!tema || !publico) {
+        alert("Preencha todos os campos!");
+        return;
+    }
 
     let post = "";
 
     if (tom === "divertido") {
-        post = `Ei ${publico}! 🍕 Temos uma novidade: ${tema}! Não perca, venha se divertir conosco! #Imperdível #BoraLá`;
+        post = `🎉 Olá ${publico}! Temos uma super novidade: ${tema}! Venha curtir e aproveitar! #DiversãoGarantida 🎊`;
     } else if (tom === "profissional") {
-        post = `${tema}: Pensando em atender melhor nosso público ${publico}, estamos lançando essa novidade. Contamos com você!`;
+        post = `${tema}: Pensando no melhor para ${publico}, estamos lançando esta nova oportunidade. Conte conosco para crescer! 🚀`;
     } else if (tom === "agressivo") {
-        post = `ATENÇÃO ${publico}: ${tema} começou AGORA! Vagas LIMITADAS! Não fique de fora! 🚀🔥`;
+        post = `🔥 ATENÇÃO ${publico}! ${tema} começou AGORA! Poucas unidades, quem chegar leva! ⚡ #Corre #Promoção`;
     }
 
     document.getElementById('output').innerText = post;
@@ -54,8 +67,10 @@ function gerarPost() {
 
 function copiarTexto() {
     let texto = document.getElementById('output').innerText;
-    navigator.clipboard.writeText(texto);
-    alert("Texto copiado!");
+    if (texto) {
+        navigator.clipboard.writeText(texto);
+        alert("Texto copiado!");
+    }
 }
 </script>
 
