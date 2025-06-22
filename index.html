@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoPost Express</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        #output { background: #eee; padding: 15px; border-radius: 5px; min-height: 100px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>AutoPost Express</h1>
+    <label>Tema do post:</label>
+    <input type="text" id="tema" placeholder="Ex: Promoção de pizzaria">
+    
+    <label>Público-alvo:</label>
+    <input type="text" id="publico" placeholder="Ex: Jovens universitários">
+    
+    <label>Tom do post:</label>
+    <select id="tom">
+        <option value="divertido">Divertido</option>
+        <option value="profissional">Profissional</option>
+        <option value="agressivo">Agressivo</option>
+    </select>
+    
+    <button onclick="gerarPost()">Gerar Post</button>
+    
+    <div id="output"></div>
+    <button onclick="copiarTexto()">Copiar</button>
+</div>
+
+<script>
+function gerarPost() {
+    let tema = document.getElementById('tema').value;
+    let publico = document.getElementById('publico').value;
+    let tom = document.getElementById('tom').value;
+
+    let post = "";
+
+    if (tom === "divertido") {
+        post = `Ei ${publico}! 🍕 Temos uma novidade: ${tema}! Não perca, venha se divertir conosco! #Imperdível #BoraLá`;
+    } else if (tom === "profissional") {
+        post = `${tema}: Pensando em atender melhor nosso público ${publico}, estamos lançando essa novidade. Contamos com você!`;
+    } else if (tom === "agressivo") {
+        post = `ATENÇÃO ${publico}: ${tema} começou AGORA! Vagas LIMITADAS! Não fique de fora! 🚀🔥`;
+    }
+
+    document.getElementById('output').innerText = post;
+}
+
+function copiarTexto() {
+    let texto = document.getElementById('output').innerText;
+    navigator.clipboard.writeText(texto);
+    alert("Texto copiado!");
+}
+</script>
+
+</body>
+</html>
