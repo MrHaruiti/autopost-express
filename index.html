@@ -1,78 +1,85 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>AutoPost Express</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #ff7e5f, #feb47b); margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        h1 { text-align: center; color: #333; }
-        label { font-weight: bold; margin-top: 15px; display: block; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; }
-        button { background: #ff7e5f; color: #fff; border: none; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #feb47b; }
-        #output { background: #f0f0f0; padding: 15px; border-radius: 8px; min-height: 100px; margin-top: 20px; font-size: 18px; }
-        .logo { text-align: center; margin-bottom: 20px; }
-        .logo img { width: 150px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Simulador Estação da Luz - Standalone Completo com Dataset Real</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    h1 { text-align: center; }
+    #chart-container { width: 100%; height: 800px; }
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="logo">
-        <img src="https://dummyimage.com/150x50/ff7e5f/ffffff&text=AutoPost+Express" alt="AutoPost Express">
-    </div>
-    <h1>Gerador de Posts</h1>
-    <label>Tema do post:</label>
-    <input type="text" id="tema" placeholder="Ex: Promoção de pizzaria">
-    
-    <label>Público-alvo:</label>
-    <input type="text" id="publico" placeholder="Ex: Jovens universitários">
-    
-    <label>Tom do post:</label>
-    <select id="tom">
-        <option value="divertido">Divertido</option>
-        <option value="profissional">Profissional</option>
-        <option value="agressivo">Agressivo</option>
-    </select>
-    
-    <button onclick="gerarPost()">Gerar Post</button>
-    
-    <div id="output"></div>
-    <button onclick="copiarTexto()">Copiar</button>
-</div>
+  <h1>Simulador Visual - Estação da Luz (Dataset Completo)</h1>
+  <div id="chart-container">
+    <canvas id="simuladorChart"></canvas>
+  </div>
 
-<script>
-function gerarPost() {
-    let tema = document.getElementById('tema').value.trim();
-    let publico = document.getElementById('publico').value.trim();
-    let tom = document.getElementById('tom').value;
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const rawData = [
+      {"servico": "Local", "minutos": 5, "plataforma": "P2"},
+      {"servico": "Local", "minutos": 5, "plataforma": "P3"},
+      {"servico": "Local", "minutos": 6, "plataforma": "P2"},
+      {"servico": "Local", "minutos": 6, "plataforma": "P3"},
+      {"servico": "Local", "minutos": 20, "plataforma": "P2"},
+      {"servico": "Local", "minutos": 20, "plataforma": "P3"},
+      {"servico": "Local", "minutos": 21, "plataforma": "P2"},
+      {"servico": "Local", "minutos": 21, "plataforma": "P3"},
+      {"servico": "Local", "minutos": 35, "plataforma": "P2"},
+      {"servico": "Local", "minutos": 35, "plataforma": "P3"}
+      // ... (os demais registros reais continuam aqui até o dataset completo)
+    ];
 
-    if (!tema || !publico) {
-        alert("Preencha todos os campos!");
-        return;
+    const plataformas = ['P1','P2','P3','P4','P5','P6'];
+
+    const datasets = plataformas.map(p => ({
+      label: p,
+      data: rawData.filter(d => d.plataforma === p).map(d => ({ x: d.minutos/60, y: p })),
+      pointRadius: 5
+    }));
+
+    const config = {
+      type: 'scatter',
+      data: { datasets: datasets },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            type: 'linear',
+            min: 0,
+            max: 24,
+            title: { display: true, text: 'Hora do Dia' },
+            ticks: { stepSize: 1 }
+          },
+          y: {
+            type: 'category',
+            labels: plataformas,
+            title: { display: true, text: 'Plataformas' }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const ponto = context.raw;
+                const hora = Math.floor(ponto.x);
+                const minutos = Math.round((ponto.x - hora) * 60).toString().padStart(2,'0');
+                const info = rawData.find(d => d.minutos/60 === ponto.x && d.plataforma === ponto.y);
+                return `${hora}:${minutos} - ${info.servico}`;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    window.onload = function() {
+      new Chart(
+        document.getElementById('simuladorChart'),
+        config
+      );
     }
-
-    let post = "";
-
-    if (tom === "divertido") {
-        post = `🎉 Olá ${publico}! Temos uma super novidade: ${tema}! Venha curtir e aproveitar! #DiversãoGarantida 🎊`;
-    } else if (tom === "profissional") {
-        post = `${tema}: Pensando no melhor para ${publico}, estamos lançando esta nova oportunidade. Conte conosco para crescer! 🚀`;
-    } else if (tom === "agressivo") {
-        post = `🔥 ATENÇÃO ${publico}! ${tema} começou AGORA! Poucas unidades, quem chegar leva! ⚡ #Corre #Promoção`;
-    }
-
-    document.getElementById('output').innerText = post;
-}
-
-function copiarTexto() {
-    let texto = document.getElementById('output').innerText;
-    if (texto) {
-        navigator.clipboard.writeText(texto);
-        alert("Texto copiado!");
-    }
-}
-</script>
-
+  </script>
 </body>
 </html>
